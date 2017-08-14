@@ -38,6 +38,7 @@ extern "C"
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <iostream>
 
 /* This static indicates the debugging module that this .o belongs to.  */
 static QofLogModule log_module = "qof.kvp";
@@ -71,6 +72,7 @@ static inline Path
 make_vector(std::string key)
 {
     Path path;
+    std::cout << "Making vector from " << key;
     for (auto length = key.find(delim); length != std::string::npos;)
     {
         if (length != 0)
@@ -79,7 +81,8 @@ make_vector(std::string key)
         length = key.find(delim);
     }
     if (!key.empty())
-	path.push_back(key);
+        path.push_back(key);
+    std::cout << " got " << path.size() << " elements.\n";
     return path;
 }
 
@@ -87,8 +90,9 @@ KvpValue*
 KvpFrameImpl::set(const char* key, KvpValue* value) noexcept
 {
     if (!key) return nullptr;
-    if (strchr(key, delim))
-        return set(make_vector(key), value);
+    std::cout << "Setting " << key << " without splitting \n";
+    //if (strchr(key, delim))
+        //return set(make_vector(key), value);
     KvpValue* ret {nullptr};
     auto spot = m_valuemap.find(key);
     if (spot != m_valuemap.end())
@@ -130,40 +134,16 @@ KvpFrameImpl::set(Path path, KvpValue* value) noexcept
     auto cur_frame = walk_path_or_nullptr(this, path);
     if (cur_frame == nullptr)
         return nullptr;
-    if (last_key.find(delim) != std::string::npos)
-        return set(make_vector(last_key), value);
+    //if (last_key.find(delim) != std::string::npos)
+        //return set(make_vector(last_key), value);
     return cur_frame->set(last_key.c_str(), value);
-}
-
-static inline KvpFrameImpl*
-walk_path_and_create(KvpFrameImpl* frame, Path path)
-{
-     for(auto key:path)
-    {
-	if (key.empty())
-	    continue;
-        if (key.find(delim) != std::string::npos)
-        {
-            frame = walk_path_and_create(frame, make_vector(key));
-            continue;
-        }
-        auto slot = frame->get_slot(key.c_str());
-        if (slot == nullptr || slot->get_type() != KvpValue::Type::FRAME)
-        {
-            auto new_frame = new KvpFrame;
-            delete frame->set(key.c_str(), new KvpValue{new_frame});
-            frame = new_frame;
-            continue;
-        }
-        frame = slot->get<KvpFrame*>();
-    }
-    return frame;
 }
 
 KvpValue*
 KvpFrameImpl::set_path(const char* path, KvpValue* value) noexcept
 {
-    return set_path(make_vector(path), value);
+    std::cout << "set_path called with " << path << "\n";
+    return set_path(Path{path}, value);
 }
 
 KvpValue*
@@ -172,9 +152,18 @@ KvpFrameImpl::set_path(Path path, KvpValue* value) noexcept
     auto cur_frame = this;
     auto last_key = path.back();
     path.pop_back();
-    cur_frame = walk_path_and_create(const_cast<KvpFrame*>(this), path);
-    if (last_key.find(delim) != std::string::npos)
-        return set_path(make_vector(last_key), value);
+    for (auto const & key : path)
+    {
+        auto slot = cur_frame->get_slot(key.c_str());
+        if (!slot || slot->get_type() != KvpValueImpl::Type::FRAME)
+        {
+            auto new_frame{new KvpFrame};
+            delete cur_frame->set(key.c_str(), new KvpValue{new_frame});
+            cur_frame = new_frame;
+            continue;
+        }
+        cur_frame = slot->get<KvpFrame*>();
+    }
     return cur_frame->set(last_key.c_str(), value);
 }
 
@@ -232,8 +221,8 @@ KvpValueImpl *
 KvpFrameImpl::get_slot(const char * key) const noexcept
 {
     if (!key) return nullptr;
-    if (strchr(key, delim))
-        return get_slot(make_vector(key));
+    //if (strchr(key, delim))
+        //return get_slot(make_vector(key));
     auto spot = m_valuemap.find(key);
     if (spot == m_valuemap.end())
         return nullptr;
@@ -248,8 +237,8 @@ KvpFrameImpl::get_slot(Path path) const noexcept
     auto cur_frame = walk_path_or_nullptr(this, path);
     if (cur_frame == nullptr)
         return nullptr;
-    if (last_key.find(delim) != std::string::npos)
-        return get_slot(make_vector(last_key));
+    //if (last_key.find(delim) != std::string::npos)
+        //return get_slot(make_vector(last_key));
     return cur_frame->get_slot(last_key.c_str());
 
 }

@@ -1060,9 +1060,31 @@ qof_instance_has_kvp (QofInstance *inst)
 }
 
 void
+qof_instance_set_kvp_with_slashes (QofInstance *inst, const GValue *value,
+        const gchar * key1, const gchar *key2, const gchar * key3)
+{
+    delete inst->kvp_data->set_path(Path{key1,key2,key3}, kvp_value_from_gvalue(value));
+}
+
+void
 qof_instance_set_kvp (QofInstance *inst, const gchar *key, const GValue *value)
 {
     delete inst->kvp_data->set_path(key, kvp_value_from_gvalue(value));
+}
+
+void
+qof_instance_get_kvp_with_slashes(const QofInstance *inst, GValue *value, const gchar* key1,
+        const gchar* key2, const gchar* key3)
+{
+    auto temp = gvalue_from_kvp_value (inst->kvp_data->get_slot(Path{key1,key2,key3}));
+    if (G_IS_VALUE (temp))
+    {
+        if (G_IS_VALUE (value))
+            g_value_unset (value);
+        g_value_init (value, G_VALUE_TYPE (temp));
+	g_value_copy (temp, value);
+	gnc_gvalue_free (temp);
+    }
 }
 
 void

@@ -112,7 +112,7 @@ test_kvp_frames1 (void)
     {
         auto test_val1 = get_random_kvp_value (i % KvpValue::Type::FRAME);
         auto test_frame1 = new KvpFrame;
-        auto test_key = get_random_string_without ("/");
+        auto test_key = get_random_string();
 
         test_frame1->set (test_key, test_val1);
 

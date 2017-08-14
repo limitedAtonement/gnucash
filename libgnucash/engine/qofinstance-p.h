@@ -113,6 +113,10 @@ void qof_instance_set_idata(gpointer inst, guint32 idata);
  * @return TRUE if Kvp isn't empty.
  */
 gboolean qof_instance_has_kvp (QofInstance *inst);
+
+void qof_instance_set_kvp_with_slashes(QofInstance *, const GValue*,
+        const gchar*key1, const gchar*key2, const gchar*key3);
+
 /** Sets a KVP slot to a value from a GValue. The key can be a '/'-delimited
  * path, and intermediate container frames will be created if necessary.
  * Commits the change to the QofInstance.
@@ -122,6 +126,10 @@ gboolean qof_instance_has_kvp (QofInstance *inst);
  * how to store.
  */
 void qof_instance_set_kvp (QofInstance *inst, const gchar *key, const GValue *value);
+
+void qof_instance_get_kvp_with_slashes (const QofInstance *, GValue*,
+        const gchar*key1, const gchar*key2, const gchar*key3);
+
 /** Retrieves the contents of a KVP slot into a provided GValue.
  * @param inst: The QofInstance
  * @param key: The key of or '/'-delimited path to the slot.
