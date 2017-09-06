@@ -1,0 +1,25 @@
+#!/bin/bash -l
+
+#Since several applications were just installed, they haven't had time to make themselves known
+#on the path. An alternative would be to start a subshell: bash -l
+git clone --depth 1 https://github.com/Gnucash/gnucash.git;
+mkdir build;
+cd build;
+export TZ="America/Los_Angeles";
+if [[ "$BUILDTYPE" == "cmake-make" ]]; then
+    cmake ../gnucash
+    make -j 4;
+    make check;
+elif [[ "$BUILDTYPE" == "cmake-ninja" ]]; then
+    cmake ../gnucash -DCMAKE_BUILD_TYPE=debug -DENABLE_DEBUG=on -G Ninja || exit 1
+    ninja || exit 2
+    ninja check;
+elif [[ "$BUILDTYPE" == "autotools" ]]; then
+    ../gnucash/autogen.sh;
+    ../gnucash/configure --enable-python;
+    make;
+    make check;
+else
+    echo "Unknown buildtype: \"$BUILDTYPE\". Not building.";
+fi
+
