@@ -10,6 +10,8 @@ services:
     - docker
 install:
     - sudo docker --version
-    - sudo docker build . -t gnucashbuild
+    - sudo docker build -f util/ci/arch-docker -t arch-gnucashbuild
+    - sudo docker build -f util/ci/ubuntu-14.04-docker -t ubuntu-14.04-gnucashbuild
 script:
-    - sudo docker run --env="BUILDTYPE=$BUILDTYPE" --rm gnucashbuild
+    - sudo docker run --env="BUILDTYPE=$BUILDTYPE" --rm arch-gnucashbuild
+    - sudo docker run --env="BUILDTYPE=$BUILDTYPE" --rm ubuntu-14.04-gnucashbuild

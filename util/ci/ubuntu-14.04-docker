@@ -1,0 +1,11 @@
+from ubuntu:14.04
+run apt-get update -qq
+run apt-get build-dep -qq gnucash
+run apt-get install -qq swig
+run apt-get install -qq libboost-all-dev
+run apt-get --reinstall install -qq language-pack-en language-pack-fr
+run apt-get install -qq git
+run apt-get install -qq bash-completion
+copy ubuntu-14.04-testscript /
+run chmod +x /ubuntu-14.04-testscript
+entrypoint /ubuntu-14.04-testscript
