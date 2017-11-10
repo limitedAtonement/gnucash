@@ -1444,10 +1444,11 @@ GList *gnc_account_imap_get_info (Account *acc, const char *category);
  */
 gchar *gnc_account_get_map_entry (Account *acc, const char *full_category);
 
-/** Delete the entry for Account pointed to by full_category, if empty is TRUE then use
- *  delete if empty, full_category is freed
+/** If prefix is true, category is treated as a prefix and all kvp matching that
+ * prefix are deleted. Otherwise, only the value associated with category will
+ * be deleted. category is freed as well.
  */
-void gnc_account_delete_map_entry (Account *acc, char *full_category, gboolean empty);
+void gnc_account_delete_map_entry (Account *acc, char *category, gboolean prefix);
 
 /** Search for Bayesian entries with mappings based on full account name and change
  *  them to be based on the account guid

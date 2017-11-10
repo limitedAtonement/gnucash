@@ -137,7 +137,7 @@ gnc_ab_trans_templ_list_new_from_book(QofBook *b)
 {
     GList *retval = NULL;
     auto toplevel = qof_instance_get_slots (QOF_INSTANCE (b));
-    auto slot = toplevel->get_slot({"hbci", "template-list"});
+    auto slot = toplevel->get_slot({"hbci/template-list"});
     if (slot == nullptr)
         return retval;
     auto list = slot->get<GList*>();
@@ -195,7 +195,7 @@ gnc_ab_set_book_template_list (QofBook *b, GList *template_list)
                                                nullptr));
     qof_book_begin_edit(b);
     KvpFrame *toplevel = qof_instance_get_slots (QOF_INSTANCE (b));
-    delete toplevel->set_path({"hbci", "template-list"}, value);
+    delete toplevel->set_path({"hbci/template-list"}, value);
     qof_instance_set_dirty_flag (QOF_INSTANCE (b), TRUE);
     qof_book_commit_edit(b);
 }

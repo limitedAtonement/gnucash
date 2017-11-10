@@ -473,14 +473,17 @@ gnc_budget_get_num_periods(const GncBudget* budget)
     return GET_PRIVATE(budget)->num_periods;
 }
 
+#define BUF_SIZE (10 + GUID_ENCODING_LENGTH + \
+        GNC_BUDGET_MAX_NUM_PERIODS_DIGITS)
+
 static inline void
-make_period_path (const Account *account, guint period_num, char *path1, char *path2)
+make_period_path (const Account *account, guint period_num, char *path)
 {
     const GncGUID *guid;
     gchar *bufend;
     guid = xaccAccountGetGUID (account);
-    guid_to_string_buff (guid, path1);
-    g_sprintf (path2, "%d", period_num);
+    bufend = guid_to_string_buff (guid, path);
+    g_sprintf (bufend, "/%d", period_num);
 }
 
 /* period_num is zero-based */
@@ -489,15 +492,14 @@ void
 gnc_budget_unset_account_period_value(GncBudget *budget, const Account *account,
                                       guint period_num)
 {
-    gchar path_part_one [GUID_ENCODING_LENGTH];
-    gchar path_part_two [GNC_BUDGET_MAX_NUM_PERIODS_DIGITS];
+    gchar path [BUF_SIZE];
 
     g_return_if_fail (budget != NULL);
     g_return_if_fail (account != NULL);
-    make_period_path (account, period_num, path_part_one, path_part_two);
+    make_period_path (account, period_num, path);
 
     gnc_budget_begin_edit(budget);
-    qof_instance_set_var_kvp (QOF_INSTANCE (budget), NULL, 2, path_part_one, path_part_two);
+    qof_instance_set_kvp (QOF_INSTANCE (budget), NULL, path);
     qof_instance_set_dirty(&budget->inst);
     gnc_budget_commit_edit(budget);
 
@@ -511,8 +513,7 @@ void
 gnc_budget_set_account_period_value(GncBudget *budget, const Account *account,
                                     guint period_num, gnc_numeric val)
 {
-    gchar path_part_one [GUID_ENCODING_LENGTH];
-    gchar path_part_two [GNC_BUDGET_MAX_NUM_PERIODS_DIGITS];
+    gchar path[BUF_SIZE];
 
     /* Watch out for an off-by-one error here:
      * period_num starts from 0 while num_periods starts from 1 */
@@ -525,17 +526,17 @@ gnc_budget_set_account_period_value(GncBudget *budget, const Account *account,
     g_return_if_fail (budget != NULL);
     g_return_if_fail (account != NULL);
 
-    make_period_path (account, period_num, path_part_one, path_part_two);
+    make_period_path (account, period_num, path);
 
     gnc_budget_begin_edit(budget);
     if (gnc_numeric_check(val))
-        qof_instance_set_var_kvp (QOF_INSTANCE (budget), NULL, 2, path_part_one, path_part_two);
+        qof_instance_set_kvp (QOF_INSTANCE (budget), NULL, path);
     else
     {
         GValue v = G_VALUE_INIT;
         g_value_init (&v, GNC_TYPE_NUMERIC);
         g_value_set_boxed (&v, &val);
-        qof_instance_set_var_kvp (QOF_INSTANCE (budget), &v, 2, path_part_one, path_part_two);
+        qof_instance_set_kvp (QOF_INSTANCE (budget), &v, path);
     }
     qof_instance_set_dirty(&budget->inst);
     gnc_budget_commit_edit(budget);
@@ -553,15 +554,14 @@ gnc_budget_is_account_period_value_set(const GncBudget *budget,
                                        guint period_num)
 {
     GValue v = G_VALUE_INIT;
-    gchar path_part_one [GUID_ENCODING_LENGTH];
-    gchar path_part_two [GNC_BUDGET_MAX_NUM_PERIODS_DIGITS];
+    gchar path[BUF_SIZE];
     gconstpointer ptr = NULL;
 
     g_return_val_if_fail(GNC_IS_BUDGET(budget), FALSE);
     g_return_val_if_fail(account, FALSE);
 
-    make_period_path (account, period_num, path_part_one, path_part_two);
-    qof_instance_get_var_kvp (QOF_INSTANCE (budget), &v, 2, path_part_one, path_part_two);
+    make_period_path (account, period_num, path);
+    qof_instance_get_kvp (QOF_INSTANCE (budget), &v, path);
     if (G_VALUE_HOLDS_BOXED (&v))
         ptr = g_value_get_boxed (&v);
     return (ptr != NULL);
@@ -573,15 +573,14 @@ gnc_budget_get_account_period_value(const GncBudget *budget,
                                     guint period_num)
 {
     gnc_numeric *numeric = NULL;
-    gchar path_part_one [GUID_ENCODING_LENGTH];
-    gchar path_part_two [GNC_BUDGET_MAX_NUM_PERIODS_DIGITS];
+    gchar path[BUF_SIZE];
     GValue v = G_VALUE_INIT;
 
     g_return_val_if_fail(GNC_IS_BUDGET(budget), gnc_numeric_zero());
     g_return_val_if_fail(account, gnc_numeric_zero());
 
-    make_period_path (account, period_num, path_part_one, path_part_two);
-    qof_instance_get_var_kvp (QOF_INSTANCE (budget), &v, 2, path_part_one, path_part_two);
+    make_period_path (account, period_num, path);
+    qof_instance_get_kvp (QOF_INSTANCE (budget), &v, path);
     if (G_VALUE_HOLDS_BOXED (&v))
         numeric = (gnc_numeric*)g_value_get_boxed (&v);
 

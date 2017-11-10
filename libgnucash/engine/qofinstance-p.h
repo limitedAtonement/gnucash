@@ -124,7 +124,7 @@ gboolean qof_instance_has_kvp (QofInstance *inst);
  * @param value: A GValue containing an item of a type which KvpValue knows
  *           how to store.
  */
-void qof_instance_set_var_kvp (QofInstance *, GValue const * value, unsigned count, ...);
+void qof_instance_set_kvp (QofInstance *, GValue const * value, char const * path);
 
 /** Retrieves the contents of a KVP slot into a provided GValue.
  * @param inst: The QofInstance
@@ -132,7 +132,7 @@ void qof_instance_set_var_kvp (QofInstance *, GValue const * value, unsigned cou
  * @param value: A GValue into which to store the value of the slot. It will be
  *               set to the correct type.
  */
-void qof_instance_get_var_kvp (QofInstance *, GValue * value, unsigned count, ...);
+void qof_instance_get_kvp (QofInstance *, GValue * value, char const * path);
 
 /** @} Close out the DOxygen ingroup */
 /* Functions to isolate the KVP mechanism inside QOF for cases where
@@ -154,22 +154,12 @@ void qof_instance_kvp_merge_guids (const QofInstance *target,
                                    const QofInstance *donor, const char* path);
 gboolean qof_instance_has_slot (const QofInstance *inst, const char *path);
 void qof_instance_slot_delete (const QofInstance *, const char * path);
-void qof_instance_slot_delete_if_empty (const QofInstance *, const char * path);
+void qof_instance_slot_delete_prefix (const QofInstance *, const char * path);
 void qof_instance_foreach_slot (const QofInstance *inst, const char *path,
                                 void(*proc)(const char*, const GValue*, void*),
                                 void* data);
 #ifdef __cplusplus
 } /* extern "C" */
-
-void qof_instance_get_path_kvp (QofInstance *, GValue *, std::vector<std::string> const &);
-
-void qof_instance_set_path_kvp (QofInstance *, GValue const *, std::vector<std::string> const &);
-
-bool qof_instance_has_path_slot (QofInstance const *, std::vector<std::string> const &);
-
-void qof_instance_slot_path_delete (QofInstance const *, std::vector<std::string> const &);
-
-void qof_instance_slot_path_delete_if_empty (QofInstance const *, std::vector<std::string> const &);
 
 /** Returns all keys that match the given prefix and their corresponding values.*/
 std::vector <std::pair <std::string, KvpValue*>>

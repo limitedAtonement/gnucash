@@ -133,16 +133,6 @@ struct KvpFrameImpl
     ~KvpFrameImpl() noexcept;
 
     /**
-     * Set the value with the key in the immediate frame, replacing and
-     * returning the old value if it exists or nullptr if it doesn't. Takes
-     * ownership of new value and releases ownership of the returned old
-     * value. Values must be allocated on the free store with operator new.
-     * @param key: The key to insert/replace.
-     * @param newvalue: The value to set at key.
-     * @return The old value if there was one or nullptr.
-     */
-    //KvpValue* set(const char * key, KvpValue* newvalue) noexcept;
-    /**
      * Set the value with the key in a subframe following the keys in path,
      * replacing and returning the old value if it exists or nullptr if it
      * doesn't. Takes ownership of new value and releases ownership of the

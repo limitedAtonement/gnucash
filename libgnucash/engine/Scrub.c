@@ -1228,10 +1228,10 @@ xaccAccountDeleteOldData (Account *account)
 {
     if (!account) return;
     xaccAccountBeginEdit (account);
-    qof_instance_set_var_kvp (QOF_INSTANCE (account), NULL, 1, "old-currency");
-    qof_instance_set_var_kvp (QOF_INSTANCE (account), NULL, 1, "old-security");
-    qof_instance_set_var_kvp (QOF_INSTANCE (account), NULL, 1, "old-currency-scu");
-    qof_instance_set_var_kvp (QOF_INSTANCE (account), NULL, 1, "old-security-scu");
+    qof_instance_set_kvp (QOF_INSTANCE (account), NULL, "old-currency");
+    qof_instance_set_kvp (QOF_INSTANCE (account), NULL, "old-security");
+    qof_instance_set_kvp (QOF_INSTANCE (account), NULL, "old-currency-scu");
+    qof_instance_set_kvp (QOF_INSTANCE (account), NULL, "old-security-scu");
     qof_instance_set_dirty (QOF_INSTANCE (account));
     xaccAccountCommitEdit (account);
 }
@@ -1334,10 +1334,8 @@ xaccAccountScrubKvp (Account *account)
 {
     GValue v = G_VALUE_INIT;
     gchar *str2;
-
     if (!account) return;
-
-    qof_instance_get_var_kvp (QOF_INSTANCE (account), &v, 1, "notes");
+    qof_instance_get_kvp (QOF_INSTANCE (account), &v, "notes");
     if (G_VALUE_HOLDS_STRING (&v))
     {
         str2 = g_strstrip(g_value_dup_string(&v));
@@ -1345,14 +1343,11 @@ xaccAccountScrubKvp (Account *account)
             qof_instance_slot_delete (QOF_INSTANCE (account), "notes");
         g_free(str2);
     }
-
-    qof_instance_get_var_kvp (QOF_INSTANCE (account), &v, 1, "placeholder");
+    qof_instance_get_kvp (QOF_INSTANCE (account), &v, "placeholder");
     if ((G_VALUE_HOLDS_STRING (&v) &&
         strcmp(g_value_get_string (&v), "false") == 0) ||
         (G_VALUE_HOLDS_BOOLEAN (&v) && ! g_value_get_boolean (&v)))
         qof_instance_slot_delete (QOF_INSTANCE (account), "placeholder");
-
-    qof_instance_slot_delete_if_empty (QOF_INSTANCE (account), "hbci");
 }
 
 /* ================================================================ */
