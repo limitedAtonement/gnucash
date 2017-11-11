@@ -117,10 +117,10 @@ TEST_F(ImapPlainTest, FindAccount)
     auto root = qof_instance_get_slots(QOF_INSTANCE(t_bank_account));
     auto acc1_val = new KvpValue(guid_copy(xaccAccountGetGUID(t_expense_account1)));
     auto acc2_val = new KvpValue(guid_copy(xaccAccountGetGUID(t_expense_account2)));
-    root->set_path({IMAP_FRAME, "foo", "bar"}, acc1_val);
-    root->set_path({IMAP_FRAME, "baz", "waldo"}, acc2_val);
-    root->set_path({IMAP_FRAME, "pepper"}, new KvpValue{*acc1_val});
-    root->set_path({IMAP_FRAME, "salt"}, new KvpValue{*acc2_val});
+    root->set_path({std::string {IMAP_FRAME} + "/foo/bar"}, acc1_val);
+    root->set_path({std::string {IMAP_FRAME} + "/baz/waldo"}, acc2_val);
+    root->set_path({std::string {IMAP_FRAME} + "/pepper"}, new KvpValue{*acc1_val});
+    root->set_path({std::string {IMAP_FRAME} + "/salt"}, new KvpValue{*acc2_val});
 
     EXPECT_EQ(t_expense_account1, gnc_account_imap_find_account(t_imap, "foo", "bar"));
     EXPECT_EQ(t_expense_account2, gnc_account_imap_find_account(t_imap, "baz", "waldo"));
@@ -148,25 +148,27 @@ TEST_F(ImapPlainTest, AddAccount)
     qof_instance_reset_editlevel(QOF_INSTANCE(t_bank_account));
 
     auto root = qof_instance_get_slots(QOF_INSTANCE(t_bank_account));
-    auto value = root->get_slot({IMAP_FRAME, "foo", "bar"});
+    auto value = root->get_slot({std::string{IMAP_FRAME} + "/foo/bar"});
     auto check_account = [this](KvpValue* v) {
         return xaccAccountLookup(v->get<GncGUID*>(), this->t_imap->book); };
     EXPECT_EQ(t_expense_account1, check_account(value));
-    value = root->get_slot({IMAP_FRAME, "baz", "waldo"});
+    value = root->get_slot({std::string{IMAP_FRAME} + "/baz/waldo"});
     EXPECT_EQ(t_expense_account2, check_account(value));
-    value = root->get_slot({IMAP_FRAME, "pepper"});
+    value = root->get_slot({std::string{IMAP_FRAME} + "/pepper"});
     EXPECT_EQ(t_expense_account1, check_account(value));
-    value = root->get_slot({IMAP_FRAME, "salt"});
+    value = root->get_slot({std::string{IMAP_FRAME} + "/salt"});
     EXPECT_EQ(t_expense_account2, check_account(value));
-    value = root->get_slot({IMAP_FRAME, "pork", "sausage"});
+    value = root->get_slot({std::string{IMAP_FRAME} + "/pork/sausage"});
     EXPECT_EQ(nullptr, value);
 }
 
 TEST_F(ImapPlainTest, DeleteAccount)
 {
-    Path path1 {IMAP_FRAME, "foo", "waldo"};
-    Path path2 {IMAP_FRAME, "foo"};
-    Path path3 {IMAP_FRAME};
+    std::string path1 {IMAP_FRAME};
+    path1 += "/foo/waldo";
+    std::string path2 {IMAP_FRAME};
+    path2 += "/foo";
+    std::string path3 {IMAP_FRAME};
 
 // prevent the embedded beginedit/committedit from doing anything
     qof_instance_increase_editlevel(QOF_INSTANCE(t_bank_account));
@@ -187,17 +189,17 @@ TEST_F(ImapPlainTest, DeleteAccount)
     EXPECT_EQ(t_expense_account1, gnc_account_imap_find_account(t_imap, "foo", "bar"));
     EXPECT_EQ(nullptr, gnc_account_imap_find_account(t_imap, "foo", "waldo"));
     auto root = qof_instance_get_slots(QOF_INSTANCE(t_bank_account));
-    EXPECT_EQ(nullptr, root->get_slot(path1));
+    EXPECT_EQ(nullptr, root->get_slot({path1}));
 
     gnc_account_imap_delete_account(t_imap, "foo", "bar");
     EXPECT_TRUE(qof_instance_get_dirty_flag(QOF_INSTANCE(t_bank_account)));
     qof_instance_mark_clean(QOF_INSTANCE(t_bank_account));
-    EXPECT_EQ(nullptr, root->get_slot(path2));
+    EXPECT_EQ(nullptr, root->get_slot({path2}));
 
     gnc_account_imap_delete_account(t_imap, NULL, "pepper");
     EXPECT_TRUE(qof_instance_get_dirty_flag(QOF_INSTANCE(t_bank_account)));
     qof_instance_mark_clean(QOF_INSTANCE(t_bank_account));
-    EXPECT_EQ(nullptr, root->get_slot(path3));
+    EXPECT_EQ(nullptr, root->get_slot({path3}));
     qof_instance_reset_editlevel(QOF_INSTANCE(t_bank_account));
 }
 
