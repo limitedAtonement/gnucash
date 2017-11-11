@@ -136,21 +136,37 @@ GList*
 gnc_ab_trans_templ_list_new_from_book(QofBook *b)
 {
     GList *retval = NULL;
-    auto toplevel = qof_instance_get_slots (QOF_INSTANCE (b));
-    auto slot = toplevel->get_slot({"hbci/template-list"});
-    if (slot == nullptr)
-        return retval;
-    auto list = slot->get<GList*>();
-    for (auto node = list; node != NULL; node = g_list_next (node))
+    unsigned template_num {0};
+    while (true)
     {
-        KvpFrame *frame = static_cast<KvpValue*>(node->data)->get<KvpFrame*>();
-        auto c_func = [frame](const char* key)
-            { auto slot = frame->get_slot({key});
-              return slot == nullptr ? std::string("") : std::string(slot->get<const char*>());};
-        auto n_func = [frame](const char* key)
-            { auto slot = frame->get_slot({key});
-              return slot == nullptr ? gnc_numeric_zero() : slot->get<gnc_numeric>();};
-        auto amt_slot = frame->get_slot({TT_AMOUNT});
+        std::string base_key {std::string {"hbci/template-list"} + std::to_string (template_num)};
+        auto temp_template = qof_instance_get_slots_prefix (QOF_INSTANCE (b), base_key);
+        if (!temp_template.size ())
+            break;
+        auto c_func = [&temp_template, &base_key](char const * key_end)
+            {
+                auto key = base_key + "/" + key_end;
+                auto val_iterator = std::find_if (temp_template.begin (), temp_template.end (),
+                    [&key] (std::pair <std::string, KvpValue *> const & p)
+                    {
+                        return p.first == key;
+                    });
+                if (val_iterator == temp_template.end ())
+                    return "";
+                return val_iterator->second->get <char const *> ();
+            };
+        auto n_func = [&temp_template, &base_key](const char* key_end)
+            {
+                auto key = base_key + "/" + key_end;
+                auto val_iterator = std::find_if (temp_template.begin (), temp_template.end (),
+                    [&key] (std::pair <std::string, KvpValue *> const & p)
+                    {
+                        return p.first == key;
+                    });
+                if (val_iterator == temp_template.end ())
+                    return gnc_numeric_zero ();
+                return val_iterator->second->get <gnc_numeric> ();
+            };
         auto templ = new _GncABTransTempl (c_func(TT_NAME), c_func(TT_RNAME),
                                            c_func(TT_RACC), c_func(TT_RBCODE),
                                            n_func(TT_AMOUNT), c_func(TT_PURPOS),

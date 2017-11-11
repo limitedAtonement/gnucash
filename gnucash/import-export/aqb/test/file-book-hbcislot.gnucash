@@ -32,50 +32,38 @@
 <gnc:book version="2.0.0">
 <book:id type="guid">df401b548fd313dc40a50051277a0ae6</book:id>
 <book:slots>
-  <slot>
-    <slot:key>hbci</slot:key>
-    <slot:value type="frame">
-      <slot>
-        <slot:key>config-filename</slot:key>
+    <slot>
+        <slot:key>hbci/config-filename</slot:key>
         <slot:value type="string">/some/file</slot:value>
-      </slot>
-      <slot>
-        <slot:key>template-list</slot:key>
-        <slot:value type="list">
-          <slot:value type="frame">
-            <slot>
-              <slot:key>amou</slot:key>
-              <slot:value type="numeric">0/1</slot:value>
-            </slot>
-            <slot>
-              <slot:key>name</slot:key>
-              <slot:value type="string">Some Name</slot:value>
-            </slot>
-            <slot>
-              <slot:key>purc</slot:key>
-              <slot:value type="string"></slot:value>
-            </slot>
-            <slot>
-              <slot:key>purp</slot:key>
-              <slot:value type="string">Some Purpose</slot:value>
-            </slot>
-            <slot>
-              <slot:key>racc</slot:key>
-              <slot:value type="string">1234563065</slot:value>
-            </slot>
-            <slot>
-              <slot:key>rbcd</slot:key>
-              <slot:value type="string">12310517</slot:value>
-            </slot>
-            <slot>
-              <slot:key>rnam</slot:key>
-              <slot:value type="string">Recipient Name</slot:value>
-            </slot>
-          </slot:value>
-        </slot:value>
-      </slot>
-    </slot:value>
-  </slot>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/amou</slot:key>
+        <slot:value type="numeric">0/1</slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/name</slot:key>
+        <slot:value type="string">Some Name</slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/purc</slot:key>
+        <slot:value type="string"></slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/purp</slot:key>
+        <slot:value type="string">Some Purpose</slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/racc</slot:key>
+        <slot:value type="string">1234563065</slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/rbcd</slot:key>
+        <slot:value type="string">12310517</slot:value>
+    </slot>
+    <slot>
+        <slot:key>hbci/template-list/0/rnam</slot:key>
+        <slot:value type="string">Recipient Name</slot:value>
+    </slot>
 </book:slots>
 <gnc:account version="2.0.0">
   <act:name>Root Account</act:name>
@@ -87,33 +75,28 @@
   </act:commodity>
   <act:commodity-scu>100</act:commodity-scu>
   <act:slots>
-    <slot>
-      <slot:key>hbci</slot:key>
-      <slot:value type="frame">
-        <slot>
-          <slot:key>account-id</slot:key>
+      <slot>
+          <slot:key>hbci/account-id</slot:key>
           <slot:value type="string">1234567890</slot:value>
-        </slot>
-        <slot>
-          <slot:key>account-uid</slot:key>
+      </slot>
+      <slot>
+          <slot:key>hbci/account-uid</slot:key>
           <slot:value type="integer">123</slot:value>
-        </slot>
-        <slot>
-          <slot:key>bank-code</slot:key>
+      </slot>
+      <slot>
+          <slot:key>hbci/bank-code</slot:key>
           <slot:value type="string">10020034</slot:value>
-        </slot>
-        <slot>
-          <slot:key>country-code</slot:key>
+      </slot>
+      <slot>
+          <slot:key>hbci/country-code</slot:key>
           <slot:value type="integer">280</slot:value>
-        </slot>
-        <slot>
-          <slot:key>trans-retrieval</slot:key>
+      </slot>
+      <slot>
+          <slot:key>hbci/trans-retrieval</slot:key>
           <slot:value type="timespec">
-            <ts:date>2014-08-29 13:47:36 +0200</ts:date>
+              <ts:date>2014-08-29 13:47:36 +0200</ts:date>
           </slot:value>
-        </slot>
-      </slot:value>
-    </slot>
+      </slot>
   </act:slots>
 </gnc:account>
 </gnc:book>
