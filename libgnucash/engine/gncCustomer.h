@@ -62,6 +62,10 @@ typedef struct _gncCustomerClass GncCustomerClass;
 #include "gncTaxTable.h"
 #include "gncJob.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GNC_ID_CUSTOMER       "gncCustomer"
 
 /* --- type macros --- */
@@ -163,6 +167,10 @@ gboolean gncCustomerEqual(const GncCustomer *a, const GncCustomer *b);
 
 GList * gncCustomerGetJoblist (const GncCustomer *customer, gboolean show_all);
 gboolean gncCustomerIsDirty (GncCustomer *customer);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_CUSTOMER_H_ */
 /** @} */

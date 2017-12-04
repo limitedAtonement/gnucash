@@ -38,6 +38,10 @@
 #include "qof.h"
 #include "Account.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* KVP key for report PDF directories */
 #define OWNER_EXPORT_PDF_DIRNAME "export-pdf-directory"
 #define LAST_POSTED_TO_ACCT "last-posted-to-acct"
@@ -92,5 +96,8 @@ OwnerList * gncBusinessGetOwnerList (QofBook *book, QofIdTypeConst type_name,
  * liabilities and equity accounts. */
 gboolean gncBusinessIsPaymentAcctType (GNCAccountType type);
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_BUSINESS_H_ */

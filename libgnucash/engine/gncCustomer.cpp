@@ -46,7 +46,7 @@
 #include "gncJobP.h"
 #include "gncTaxTableP.h"
 
-static gint gs_address_event_handler_id = 0;
+static int gs_address_event_handler_id = 0;
 static void listen_for_address_events(QofInstance *entity, QofEventId event_type,
                                       gpointer user_data, gpointer event_data);
 
@@ -130,7 +130,6 @@ gnc_customer_get_property (GObject         *object,
                            GParamSpec      *pspec)
 {
     GncCustomer *cust;
-    gchar *key;
     g_return_if_fail(GNC_IS_CUSTOMER(object));
 
     cust = GNC_CUSTOMER(object);
@@ -161,10 +160,7 @@ gnc_customer_set_property (GObject         *object,
                            GParamSpec      *pspec)
 {
     GncCustomer *cust;
-    gchar *key;
-
     g_return_if_fail(GNC_IS_CUSTOMER(object));
-
     cust = GNC_CUSTOMER(object);
     g_assert (qof_instance_get_editlevel(cust));
 
@@ -309,12 +305,12 @@ GncCustomer *gncCustomerCreate (QofBook *book)
 
     if (!book) return NULL;
 
-    cust = g_object_new (GNC_TYPE_CUSTOMER, NULL);
+    cust = static_cast <GncCustomer *> (g_object_new (GNC_TYPE_CUSTOMER, NULL));
     qof_instance_init_data (&cust->inst, _GNC_MOD_NAME, book);
 
-    cust->id = CACHE_INSERT ("");
-    cust->name = CACHE_INSERT ("");
-    cust->notes = CACHE_INSERT ("");
+    cust->id = static_cast <char*> (CACHE_INSERT (""));
+    cust->name = static_cast <char*> (CACHE_INSERT (""));
+    cust->notes = static_cast <char*> (CACHE_INSERT (""));
     cust->addr = gncAddressCreate (book, &cust->inst);
     cust->taxincluded = GNC_TAXINCLUDED_USEGLOBAL;
     cust->active = TRUE;
@@ -376,7 +372,7 @@ static void gncCustomerFree (GncCustomer *cust)
         \
         if (!g_strcmp0 (member, str)) return; \
         gncCustomerBeginEdit (obj); \
-        tmp = CACHE_INSERT (str); \
+        tmp = static_cast <char *> (CACHE_INSERT (str)); \
         CACHE_REMOVE (member); \
         member = tmp; \
         }
@@ -704,7 +700,7 @@ GList * gncCustomerGetJoblist (const GncCustomer *cust, gboolean show_all)
         GList *list = NULL, *iterator;
         for (iterator = cust->jobs; iterator; iterator = iterator->next)
         {
-            GncJob *j = iterator->data;
+            GncJob *j = static_cast <GncJob *> (iterator->data);
             if (gncJobGetActive (j))
                 list = g_list_append (list, j);
         }
@@ -892,7 +888,7 @@ static QofObject gncCustomerDesc =
     DI(.interface_version = ) QOF_OBJECT_VERSION,
     DI(.e_type            = ) _GNC_MOD_NAME,
     DI(.type_label        = ) "Customer",
-    DI(.create            = ) (gpointer)gncCustomerCreate,
+    DI(.create            = ) reinterpret_cast <gpointer (*) (QofBook *)> (gncCustomerCreate),
     DI(.book_begin        = ) NULL,
     DI(.book_end          = ) gnc_customer_book_end,
     DI(.is_dirty          = ) qof_collection_is_dirty,

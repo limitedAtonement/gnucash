@@ -38,6 +38,11 @@ typedef struct _gncBillTermClass GncBillTermClass;
 #ifdef GNUCASH_MAJOR_VERSION
 #include "gncBusiness.h"
 #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GNC_ID_BILLTERM       "gncBillTerm"
 
 /* --- type macros --- */
@@ -168,6 +173,10 @@ Timespec gncBillTermComputeDueDate (const GncBillTerm *term, Timespec post_date)
 
 /* deprecated */
 #define gncBillTermGetGUID(x) qof_instance_get_guid (QOF_INSTANCE(x))
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_BILLTERM_H_ */
 /** @} */

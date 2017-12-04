@@ -51,6 +51,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 typedef gnc_numeric (*xaccGetBalanceFn)( const Account *account );
 
 typedef gnc_numeric (*xaccGetBalanceInCurrencyFn) (

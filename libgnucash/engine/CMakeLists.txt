@@ -178,7 +178,7 @@ SET (engine_SOURCES
   gncBillTerm.c
   gncBusGuile.c
   gncBusiness.c
-  gncCustomer.c
+  gncCustomer.cpp
   gncEmployee.c
   gncEntry.c
   gncIDSearch.c
