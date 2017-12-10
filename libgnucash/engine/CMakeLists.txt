@@ -161,7 +161,7 @@ SET (engine_SOURCES
   gnc-features.c
   gnc-hooks.c
   gnc-int128.cpp
-  gnc-lot.c
+  gnc-lot.cpp
   gnc-numeric.cpp
   gnc-pricedb.c
   gnc-rational.cpp

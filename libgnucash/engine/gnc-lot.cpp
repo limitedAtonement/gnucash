@@ -133,7 +133,7 @@ gnc_lot_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* 
 {
     GNCLot* lot;
     LotPrivate* priv;
-    gchar *key;
+    const gchar *key;
 
     g_return_if_fail(GNC_IS_LOT(object));
 
@@ -170,7 +170,7 @@ gnc_lot_set_property (GObject* object,
 {
     GNCLot* lot;
     LotPrivate* priv;
-    gchar *key = NULL;
+    const gchar *key = NULL;
 
     g_return_if_fail(GNC_IS_LOT(object));
 
@@ -267,7 +267,7 @@ gnc_lot_new (QofBook *book)
     GNCLot *lot;
     g_return_val_if_fail (book, NULL);
 
-    lot = g_object_new (GNC_TYPE_LOT, NULL);
+    lot = (GNCLot*) g_object_new (GNC_TYPE_LOT, NULL);
     qof_instance_init_data(QOF_INSTANCE(lot), GNC_ID_LOT, book);
     qof_event_gen (QOF_INSTANCE(lot), QOF_EVENT_CREATE, NULL);
     return lot;
@@ -286,7 +286,7 @@ gnc_lot_free(GNCLot* lot)
     priv = GET_PRIVATE(lot);
     for (node = priv->splits; node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = (Split*)node->data;
         s->lot = NULL;
     }
     g_list_free (priv->splits);
@@ -493,7 +493,7 @@ gnc_lot_get_balance (GNCLot *lot)
      */
     for (node = priv->splits; node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = (Split*) node->data;
         gnc_numeric amt = xaccSplitGetAmount (s);
         baln = gnc_numeric_add_fixed (baln, amt);
         g_assert (gnc_numeric_check (baln) == GNC_ERROR_OK);
@@ -542,7 +542,7 @@ gnc_lot_get_balance_before (const GNCLot *lot, const Split *split,
         tb = xaccSplitGetParent (target);
         for (node = priv->splits; node; node = node->next)
         {
-            Split *s = node->data;
+            Split *s = (Split*) node->data;
             Split *source = xaccSplitGetGainsSourceSplit (s);
             if (source == NULL)
                 source = s;
@@ -651,7 +651,7 @@ gnc_lot_get_earliest_split (GNCLot *lot)
     priv = GET_PRIVATE(lot);
     if (! priv->splits) return NULL;
     priv->splits = g_list_sort (priv->splits, (GCompareFunc) xaccSplitOrderDateOnly);
-    return priv->splits->data;
+    return (Split*) priv->splits->data;
 }
 
 /* Utility function, get latest split in lot */
@@ -669,7 +669,7 @@ gnc_lot_get_latest_split (GNCLot *lot)
     for (node = priv->splits; node->next; node = node->next)
         ;
 
-    return node->data;
+    return (Split*) node->data;
 }
 
 /* ============================================================= */
@@ -703,7 +703,7 @@ static QofObject gncLotDesc =
     DI(.interface_version = ) QOF_OBJECT_VERSION,
     DI(.e_type            = ) GNC_ID_LOT,
     DI(.type_label        = ) "Lot",
-    DI(.create            = ) (gpointer)gnc_lot_new,
+    DI(.create            = ) reinterpret_cast <gpointer (*) (QofBook *)> (gnc_lot_new),
     DI(.book_begin        = ) NULL,
     DI(.book_end          = ) gnc_lot_book_end,
     DI(.is_dirty          = ) qof_collection_is_dirty,

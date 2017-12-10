@@ -121,7 +121,7 @@ registered using the object definition, otherwise FALSE.
 gboolean qof_object_is_choice(QofIdTypeConst type);
 
 /** \brief Set an object as using QOF_TYPE_CHOICE. */
-gboolean  qof_choice_create(char* type);
+gboolean  qof_choice_create(const char* type);
 
 /** \brief Add the choices for this parameter to the object.
 
@@ -132,7 +132,7 @@ gboolean  qof_choice_create(char* type);
 @return FALSE if object is not a choice object or on error
 	otherwise TRUE.
 */
-gboolean qof_choice_add_class(const char* choice, char* add, char* param_name);
+gboolean qof_choice_add_class(const char* choice, const char* add, const char* param_name);
 
 /** \brief Return the list of all object types usable with this parameter.
 
