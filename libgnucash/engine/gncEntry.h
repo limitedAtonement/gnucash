@@ -31,18 +31,24 @@
 #ifndef GNC_ENTRY_H_
 #define GNC_ENTRY_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _gncEntry GncEntry;
 typedef struct _gncEntryClass GncEntryClass;
 
 typedef enum
 {
-    GNC_PAYMENT_CASH = 1,
+    GNC_PAYMENT_INVALID = 0,
+    GNC_PAYMENT_CASH,
     GNC_PAYMENT_CARD
 } GncEntryPaymentType;
 
 typedef enum
 {
-    GNC_DISC_PRETAX = 1,
+    GNC_DISC_INVALID = 0,
+    GNC_DISC_PRETAX,
     GNC_DISC_SAMETIME,
     GNC_DISC_POSTTAX
 } GncDiscountHow;
@@ -329,6 +335,10 @@ int gncEntryCompare (const GncEntry *a, const GncEntry *b);
 
 /* deprecated functions, should be removed */
 #define gncEntryGetGUID(x) qof_instance_get_guid(QOF_INSTANCE(x))
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_ENTRY_H_ */
 /** @} */

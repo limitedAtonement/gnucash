@@ -96,6 +96,7 @@ GType gnc_taxtable_get_type(void);
  */
 typedef enum
 {
+    GNC_AMT_TYPE_INVALID = 0,
     GNC_AMT_TYPE_VALUE = 1, 	/**< tax is a number */
     GNC_AMT_TYPE_PERCENT		/**< tax is a percentage */
 } GncAmountType;

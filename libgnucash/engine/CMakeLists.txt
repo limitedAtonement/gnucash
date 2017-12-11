@@ -180,7 +180,7 @@ SET (engine_SOURCES
   gncBusiness.c
   gncCustomer.cpp
   gncEmployee.c
-  gncEntry.c
+  gncEntry.cpp
   gncIDSearch.c
   gncInvoice.c
   gncJob.c

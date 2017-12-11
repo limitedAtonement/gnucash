@@ -76,7 +76,8 @@ gboolean gnc_features_check_used (QofBook *, char const * feature);
 
 #ifdef __cplusplus
 } /* extern "C" */
-#endif /*__cplusplus*/
+#endif
+
 #endif /* GNC_FEATURES_H */
 /** @} */
 /** @} */

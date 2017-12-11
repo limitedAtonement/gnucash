@@ -195,7 +195,7 @@ gboolean gncEntryPaymentStringToType (const char *str, GncEntryPaymentType *type
 	\
 	if (!g_strcmp0 (member, str)) return; \
 	gncEntryBeginEdit (obj); \
-	tmp = CACHE_INSERT (str); \
+	tmp = qof_string_cache_insert (str); \
 	CACHE_REMOVE (member); \
 	member = tmp; \
 	}
@@ -420,12 +420,12 @@ GncEntry *gncEntryCreate (QofBook *book)
 
     if (!book) return NULL;
 
-    entry = g_object_new (GNC_TYPE_ENTRY, NULL);
+    entry = static_cast <GncEntry*> (g_object_new (GNC_TYPE_ENTRY, NULL));
     qof_instance_init_data (&entry->inst, _GNC_MOD_NAME, book);
 
-    entry->desc = CACHE_INSERT ("");
-    entry->action = CACHE_INSERT ("");
-    entry->notes = CACHE_INSERT ("");
+    entry->desc = qof_string_cache_insert ("");
+    entry->action = qof_string_cache_insert ("");
+    entry->notes = qof_string_cache_insert ("");
     entry->quantity = zero;
 
     entry->i_price = zero;
@@ -950,13 +950,13 @@ gnc_numeric gncEntryGetInvDiscount (const GncEntry *entry)
 
 GncAmountType gncEntryGetInvDiscountType (const GncEntry *entry)
 {
-    if (!entry) return 0;
+    if (!entry) return GNC_AMT_TYPE_INVALID;
     return entry->i_disc_type;
 }
 
 GncDiscountHow gncEntryGetInvDiscountHow (const GncEntry *entry)
 {
-    if (!entry) return 0;
+    if (!entry) return GNC_DISC_INVALID;
     return entry->i_disc_how;
 }
 
@@ -1042,7 +1042,7 @@ GncOwner * gncEntryGetBillTo (GncEntry *entry)
 
 GncEntryPaymentType gncEntryGetBillPayment (const GncEntry* entry)
 {
-    if (!entry) return 0;
+    if (!entry) return GNC_PAYMENT_INVALID;
     return entry->b_payment;
 }
 
@@ -1127,7 +1127,7 @@ static void gncEntryComputeValueInt (gnc_numeric qty, gnc_numeric price,
     /* First, compute the aggregate tpercent and tvalue numbers */
     for (node = entries; node; node = node->next)
     {
-        GncTaxTableEntry *entry = node->data;
+        GncTaxTableEntry *entry = static_cast <GncTaxTableEntry *> (node->data);
         gnc_numeric amount = gncTaxTableEntryGetAmount (entry);
 
         switch (gncTaxTableEntryGetType (entry))
@@ -1267,7 +1267,7 @@ static void gncEntryComputeValueInt (gnc_numeric qty, gnc_numeric price,
 
         for (node = entries; node; node = node->next)
         {
-            GncTaxTableEntry *entry = node->data;
+            GncTaxTableEntry *entry = static_cast <GncTaxTableEntry *> (node->data);
             Account *acc = gncTaxTableEntryGetAccount (entry);
             gnc_numeric amount = gncTaxTableEntryGetAmount (entry);
 
@@ -1503,7 +1503,7 @@ AccountValueList * gncEntryGetDocTaxValues (GncEntry *entry, gboolean is_cust_do
     /* Make a copy of the list with negated values if necessary. */
     for (node = int_values; node; node = node->next)
     {
-        GncAccountValue *acct_val = node->data;
+        GncAccountValue *acct_val = static_cast <GncAccountValue *> (node->data);
         values = gncAccountValueAdd (values, acct_val->account,
                                      (is_cn ? gnc_numeric_neg (acct_val->value)
                                       : acct_val->value));
@@ -1539,7 +1539,7 @@ AccountValueList * gncEntryGetBalTaxValues (GncEntry *entry, gboolean is_cust_do
     /* Make a copy of the list with negated values if necessary. */
     for (node = int_values; node; node = node->next)
     {
-        GncAccountValue *acct_val = node->data;
+        GncAccountValue *acct_val = static_cast <GncAccountValue *> (node->data);
         values = gncAccountValueAdd (values, acct_val->account,
                                      (is_cust_doc ? gnc_numeric_neg (acct_val->value)
                                       : acct_val->value));
@@ -1676,7 +1676,7 @@ static QofObject gncEntryDesc =
     DI(.interface_version = ) QOF_OBJECT_VERSION,
     DI(.e_type            = ) _GNC_MOD_NAME,
     DI(.type_label        = ) "Order/Invoice/Bill Entry",
-    DI(.create            = ) (gpointer)gncEntryCreate,
+    DI(.create            = ) reinterpret_cast <gpointer (*) (QofBook *)> (gncEntryCreate),
     DI(.book_begin        = ) NULL,
     DI(.book_end          = ) gnc_entry_book_end,
     DI(.is_dirty          = ) qof_collection_is_dirty,
