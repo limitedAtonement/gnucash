@@ -33,6 +33,10 @@
 #include <glib.h>
 #include "qof.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     gpointer node;
@@ -49,6 +53,10 @@ typedef struct
 /** Convert the given QofEventId (an integer number) to a string that
  * is usable in debugging output. */
 const char* qofeventid_to_string(QofEventId id);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif
 /** @} */
