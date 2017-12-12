@@ -68,7 +68,7 @@ gains_possible (GNCLot *lot)
 
     node = gnc_lot_get_split_list (lot);
     if (!node) return FALSE;
-    split = node->data;
+    split = static_cast <Split *> (node->data);
 
     acc_commodity = xaccAccountGetCommodity(acc);
     comeq = gnc_commodity_equiv (acc_commodity, split->parent->common_currency);
@@ -121,7 +121,7 @@ xaccScrubLot (GNCLot *lot)
 rethin:
             for (node = gnc_lot_get_split_list(lot); node; node = node->next)
             {
-                Split *s = node->data;
+                Split *s = static_cast <Split *> (node->data);
                 if (pcy->PolicyIsOpeningSplit (pcy, lot, s)) continue;
                 gnc_lot_remove_split (lot, s);
                 goto rethin;
@@ -169,7 +169,7 @@ xaccAccountScrubLots (Account *acc)
     lots = xaccAccountGetLotList(acc);
     for (node = lots; node; node = node->next)
     {
-        GNCLot *lot = node->data;
+        GNCLot *lot = static_cast <GNCLot *> (node->data);
         xaccScrubLot (lot);
     }
     g_list_free(lots);

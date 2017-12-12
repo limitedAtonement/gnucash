@@ -144,7 +144,7 @@ SET (engine_SOURCES
   SX-ttinfo.cpp
   Scrub.cpp
   Scrub2.cpp
-  Scrub3.c
+  Scrub3.cpp
   ScrubBusiness.c
   Split.c
   TransLog.c
