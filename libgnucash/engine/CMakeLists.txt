@@ -145,7 +145,7 @@ SET (engine_SOURCES
   Scrub.cpp
   Scrub2.cpp
   Scrub3.cpp
-  ScrubBusiness.c
+  ScrubBusiness.cpp
   Split.c
   TransLog.c
   Transaction.c

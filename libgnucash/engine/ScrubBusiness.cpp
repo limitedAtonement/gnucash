@@ -56,7 +56,7 @@ gncScrubInvoiceState (GNCLot *lot)
 
     for (ls_iter = gnc_lot_get_split_list (lot); ls_iter; ls_iter = ls_iter->next)
     {
-        Split *split = ls_iter->data;
+        Split *split = static_cast <Split *> (ls_iter->data);
         Transaction *txn = NULL; // ll_txn = "Lot Link Transaction"
 
         if (!split)
@@ -192,7 +192,7 @@ scrub_start:
     // Iterate over all splits in the lot
     for (sls_iter = gnc_lot_get_split_list (scrub_lot); sls_iter; sls_iter = sls_iter->next)
     {
-        Split *sl_split = sls_iter->data;
+        Split *sl_split = static_cast <Split *> (sls_iter->data);
         Transaction *ll_txn = NULL; // ll_txn = "Lot Link Transaction"
         SplitList *lts_iter = NULL;
 
@@ -226,7 +226,7 @@ scrub_start:
         // Iterate over all splits in the lot link transaction
         for (lts_iter = xaccTransGetSplitList (ll_txn); lts_iter; lts_iter = lts_iter->next)
         {
-            Split *ll_txn_split = lts_iter->data; // These all refer to splits in the lot link transaction
+            Split *ll_txn_split = static_cast <Split *> (lts_iter->data); // These all refer to splits in the lot link transaction
             GNCLot *remote_lot = NULL; // lot at the other end of the lot link transaction
             gboolean sl_is_doc_lot, rl_is_doc_lot;
 
@@ -327,7 +327,7 @@ gncSLFindOffsSplits (SplitList *avail_splits, gnc_numeric target_value)
         SplitList *split_iter = NULL;
         for (split_iter = avail_splits; split_iter; split_iter = split_iter->next)
         {
-            Split *split = split_iter->data;
+            Split *split = static_cast <Split *> (split_iter->data);
             SplitList *match_splits = NULL;
             gnc_numeric split_value, remaining_value;
 
@@ -378,7 +378,7 @@ gncScrubLotDanglingPayments (GNCLot *lot)
     split_list = xaccAccountGetSplitList(gnc_lot_get_account (lot));
     for (node = split_list; node; node = node->next)
     {
-        Split *free_split = node->data;
+        Split *free_split = static_cast <Split *> (node->data);
         Transaction *free_trans;
         gnc_numeric free_val;
 
@@ -408,7 +408,7 @@ gncScrubLotDanglingPayments (GNCLot *lot)
 
     for (node = match_list; node; node = node->next)
     {
-        Split *match_split = node->data;
+        Split *match_split = static_cast <Split *> (node->data);
         gnc_lot_add_split (lot, match_split);
     }
 
@@ -604,7 +604,7 @@ gncScrubBusinessAccountLots (Account *acc, QofPercentageFunc percentagefunc)
     lot_count = g_list_length (lots);
     for (node = lots; node; node = node->next)
     {
-        GNCLot *lot = node->data;
+        GNCLot *lot = static_cast <GNCLot *> (node->data);
 
         PINFO("Start processing lot %d of %d",
               curr_lot_no + 1, lot_count);
@@ -656,7 +656,7 @@ restart:
     split_count = g_list_length (splits);
     for (node = splits; node; node = node->next)
     {
-        Split *split = node->data;
+        Split *split = static_cast <Split *> (node->data);
 
         PINFO("Start processing split %d of %d",
               curr_split_no + 1, split_count);
@@ -701,7 +701,7 @@ static void
 lot_scrub_cb (Account *acc, gpointer data)
 {
     if (FALSE == xaccAccountIsAPARType (xaccAccountGetType (acc))) return;
-    gncScrubBusinessAccount (acc, data);
+    gncScrubBusinessAccount (acc, reinterpret_cast <QofPercentageFunc> (data));
 }
 
 void
@@ -709,7 +709,7 @@ gncScrubBusinessAccountTree (Account *acc, QofPercentageFunc percentagefunc)
 {
     if (!acc) return;
 
-    gnc_account_foreach_descendant(acc, lot_scrub_cb, percentagefunc);
+    gnc_account_foreach_descendant(acc, lot_scrub_cb, reinterpret_cast <gpointer> (percentagefunc));
     gncScrubBusinessAccount (acc, percentagefunc);
 }
 

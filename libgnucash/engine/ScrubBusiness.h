@@ -34,6 +34,10 @@
 
 #include "gnc-engine.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @name Cleanup functions for business objects
  * Provides the high-level API for checking and repairing ('scrubbing
  * clean') the various data objects used by the business functions.
@@ -103,6 +107,10 @@ void gncScrubBusinessAccount (Account *acc, QofPercentageFunc percentagefunc);
  *    and its sub accounts.
  */
 void gncScrubBusinessAccountTree (Account *acc, QofPercentageFunc percentagefunc);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 /** @} */
 #endif /* GNC_SCRUBBUSINESS_H */
