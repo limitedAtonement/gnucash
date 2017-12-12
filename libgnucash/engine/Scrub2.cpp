@@ -69,7 +69,7 @@ restart_loop:
     splits = xaccAccountGetSplitList(acc);
     for (node = splits; node; node = node->next)
     {
-        Split * split = node->data;
+        Split * split = static_cast <Split *> (node->data);
 
         /* If already in lot, then no-op */
         if (split->lot) continue;
@@ -176,7 +176,7 @@ xaccLotScrubDoubleBalance (GNCLot *lot)
 
     for (snode = gnc_lot_get_split_list(lot); snode; snode = snode->next)
     {
-        Split *s = snode->data;
+        Split *s = static_cast <Split *> (snode->data);
         xaccSplitComputeCapGains (s, NULL);
     }
 
@@ -189,7 +189,7 @@ xaccLotScrubDoubleBalance (GNCLot *lot)
 
     for (snode = gnc_lot_get_split_list(lot); snode; snode = snode->next)
     {
-        Split *s = snode->data;
+        Split *s = static_cast <Split *> (snode->data);
         Transaction *trans = s->parent;
 
         /* Check to make sure all splits in the lot have a common currency */
@@ -228,7 +228,7 @@ xaccLotScrubDoubleBalance (GNCLot *lot)
               gnc_num_dbg_to_string (value));
         for (node = gnc_lot_get_split_list(lot); node; node = node->next)
         {
-            Split *s = node->data;
+            Split *s = static_cast <Split *> (node->data);
             PERR ("s=%p amt=%s val=%s", s,
                   gnc_num_dbg_to_string(s->amount),
                   gnc_num_dbg_to_string(s->value));
@@ -341,7 +341,7 @@ xaccScrubMergeSubSplits (Split *split, gboolean strict)
 restart:
     for (node = txn->splits; node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = static_cast <Split *> (node->data);
         if (xaccSplitGetLot (s) != lot) continue;
         if (s == split) continue;
         if (qof_instance_get_destroying(s)) continue;
@@ -392,7 +392,7 @@ xaccScrubMergeLotSubSplits (GNCLot *lot, gboolean strict)
 restart:
     for (node = gnc_lot_get_split_list(lot); node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = static_cast <Split *> (node->data);
         if (!xaccScrubMergeSubSplits(s, strict)) continue;
 
         rc = TRUE;

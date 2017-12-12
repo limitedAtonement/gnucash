@@ -36,6 +36,10 @@
 #include "gnc-engine.h"
 #include "policy.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ============================================================== */
 /** The Policy routines try to encapsulate the FIFO/LIFO-specific
  *  parts of the cap-gains routine, and can be replaced by something
@@ -76,5 +80,9 @@ struct gncpolicy_s
     gboolean (*PolicyIsOpeningSplit) (GNCPolicy *, GNCLot *lot,
                                       Split *split);
 };
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* XACC_POLICY_P_H */

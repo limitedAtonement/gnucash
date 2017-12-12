@@ -50,6 +50,10 @@ typedef GList GncInvoiceList;
 #include "qofbook.h"
 #include "gnc-pricedb.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GNC_ID_INVOICE    "gncInvoice"
 
 typedef enum
@@ -309,6 +313,10 @@ QofBook *gncInvoiceGetBook(GncInvoice *x);
 
 /** Test support function used by test-dbi-business-stuff.c */
 gboolean gncInvoiceEqual(const GncInvoice *a, const GncInvoice *b);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_INVOICE_H_ */
 /** @} */
