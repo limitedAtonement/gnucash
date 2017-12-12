@@ -58,7 +58,7 @@
 static Account *
 gnc_collection_get_template_root( const QofCollection *col )
 {
-    return qof_collection_get_data (col);
+    return static_cast <Account *> (qof_collection_get_data (col));
 }
 
 Account *
@@ -141,7 +141,7 @@ sxtg_is_dirty(const QofCollection *col)
     descendants = gnc_account_get_descendants(root);
     for (node = descendants; node; node = g_list_next(node))
     {
-        if (qof_instance_is_dirty(node->data))
+        if (qof_instance_is_dirty(static_cast <QofInstance *> (node->data)))
         {
             dirty = TRUE;
             break;
@@ -195,7 +195,7 @@ static QofObject sxtg_object_def =
 SchedXactions*
 gnc_collection_get_schedxactions(const QofCollection *col)
 {
-    SchedXactions *rtn = qof_collection_get_data(col);
+    SchedXactions *rtn = static_cast <SchedXactions *> (qof_collection_get_data(col));
     // @@assert(rtn != null);
     return rtn;
 }
@@ -252,7 +252,7 @@ gnc_schedxactions_finalize_real(GObject* sxsp)
 static void
 mark_sx_clean(gpointer data, gpointer user_data)
 {
-    SchedXaction *sx = (SchedXaction *) data;
+    SchedXaction *sx = static_cast <SchedXaction *> (data);
     qof_instance_mark_clean (QOF_INSTANCE(sx));
 }
 
@@ -263,7 +263,7 @@ book_sxes_setup(QofBook *book)
     SchedXactions *sxes;
 
     col = qof_book_get_collection(book, GNC_ID_SCHEDXACTION);
-    sxes = g_object_new (GNC_TYPE_SCHEDXACTIONS, NULL);
+    sxes = static_cast <SchedXactions *> (g_object_new (GNC_TYPE_SCHEDXACTIONS, NULL));
     g_assert(sxes);
     qof_instance_init_data(&sxes->inst, GNC_ID_SXES, book);
     sxes->sx_list = NULL;
@@ -278,7 +278,7 @@ book_sxes_end(QofBook* book)
     SchedXactions *sxes;
 
     col = qof_book_get_collection(book, GNC_ID_SCHEDXACTION);
-    sxes = qof_collection_get_data(col);
+    sxes = static_cast <SchedXactions *> (qof_collection_get_data(col));
     if (sxes != NULL)
     {
         g_object_unref(sxes);

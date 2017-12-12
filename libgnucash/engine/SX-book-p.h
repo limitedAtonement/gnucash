@@ -37,6 +37,10 @@
 #include "qof.h"
 #include "SX-book.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ====================================================================== */
 
 SchedXactions* gnc_collection_get_schedxactions(const QofCollection *col);
@@ -45,5 +49,9 @@ SchedXactions* gnc_collection_get_schedxactions(const QofCollection *col);
 void gnc_book_set_template_root (QofBook *book, Account *templateRoot);
 
 gboolean gnc_sxtt_register (void);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* GNC_SX_BOOK_P_H */

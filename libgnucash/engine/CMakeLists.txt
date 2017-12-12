@@ -140,7 +140,7 @@ SET (engine_SOURCES
   Recurrence.cpp
   Query.cpp
   SchedXaction.cpp
-  SX-book.c
+  SX-book.cpp
   SX-ttinfo.c
   Scrub.c
   Scrub2.c
