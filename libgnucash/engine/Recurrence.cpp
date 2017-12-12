@@ -38,12 +38,12 @@ static QofLogModule log_module = LOG_MOD;
 static GDate invalid_gdate;
 
 /* Do not intl. These are used for xml storage. */
-static gchar *period_type_strings[NUM_PERIOD_TYPES] =
+static const gchar *period_type_strings[NUM_PERIOD_TYPES] =
 {
     "once", "day", "week", "month", "end of month",
     "nth weekday", "last weekday", "year",
 };
-static gchar *weekend_adj_strings[NUM_WEEKEND_ADJS] =
+static const gchar *weekend_adj_strings[NUM_WEEKEND_ADJS] =
 {
     "none", "back", "forward",
 };
@@ -430,7 +430,7 @@ recurrenceListNextInstance(const GList *rlist, const GDate *ref, GDate *next)
 
     for (iter = rlist; iter; iter = iter->next)
     {
-        const Recurrence *r = iter->data;
+        const Recurrence *r = static_cast <Recurrence *> (iter->data);
 
         recurrenceNextInstance(r, ref, &nextSingle);
         if (!g_date_valid(&nextSingle)) continue;
@@ -446,8 +446,8 @@ recurrenceListNextInstance(const GList *rlist, const GDate *ref, GDate *next)
 gchar *
 recurrenceToString(const Recurrence *r)
 {
-    gchar *tmpDate;
-    gchar *tmpPeriod, *ret;
+    gchar *tmpDate, *ret;
+    const gchar *tmpPeriod;
 
     g_return_val_if_fail(g_date_valid(&r->start), NULL);
     tmpDate = g_new0(gchar, MAX_DATE_LENGTH + 1);
@@ -514,8 +514,8 @@ recurrencePeriodTypeFromString(const gchar *str)
 
     for (i = 0; i < NUM_PERIOD_TYPES; i++)
         if (g_strcmp0(period_type_strings[i], str) == 0)
-            return i;
-    return -1;
+            return static_cast <PeriodType> (i);
+    return PERIOD_INVALID;
 }
 
 gchar *
@@ -531,8 +531,8 @@ recurrenceWeekendAdjustFromString(const gchar *str)
 
     for (i = 0; i < NUM_WEEKEND_ADJS; i++)
         if (g_strcmp0(weekend_adj_strings[i], str) == 0)
-            return i;
-    return -1;
+            return static_cast <WeekendAdjust> (i);
+    return WEEKEND_ADJ_INVALID;
 }
 
 gboolean
