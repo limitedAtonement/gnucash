@@ -74,7 +74,7 @@ xaccQueryGetSplitsUniqueTrans(QofQuery *q)
 
     for (current = splits; current; current = current->next)
     {
-        Split *split = current->data;
+        Split *split = static_cast <Split*> (current->data);
         Transaction *trans = xaccSplitGetParent (split);
 
         if (!g_hash_table_lookup (trans_hash, trans))
@@ -98,9 +98,9 @@ xaccQueryGetSplitsUniqueTrans(QofQuery *q)
 static void
 query_match_all_filter_func(gpointer key, gpointer value, gpointer user_data)
 {
-    Transaction * t = key;
+    Transaction * t = static_cast <Transaction *> (key);
     int         num_matches = GPOINTER_TO_INT(value);
-    GList       ** matches = user_data;
+    GList       ** matches = static_cast <GList **> (user_data);
 
     if (num_matches == xaccTransCountSplits(t))
     {
@@ -111,8 +111,8 @@ query_match_all_filter_func(gpointer key, gpointer value, gpointer user_data)
 static void
 query_match_any_filter_func(gpointer key, gpointer value, gpointer user_data)
 {
-    Transaction * t = key;
-    GList       ** matches = user_data;
+    Transaction * t = static_cast <Transaction *> (key);
+    GList       ** matches = static_cast <GList **> (user_data);
     *matches = g_list_prepend(*matches, t);
 }
 
@@ -169,9 +169,9 @@ xaccQueryGetTransactions (QofQuery * q, query_txn_match_t runtype)
 static void
 query_match_all_lot_filter_func(gpointer key, gpointer value, gpointer user_data)
 {
-    GNCLot *	l = key;
+    GNCLot *	l = static_cast <GNCLot *> (key);
     int		num_matches = GPOINTER_TO_INT(value);
-    GList **	matches = user_data;
+    GList **	matches = static_cast <GList **> (user_data);
 
     if (num_matches == gnc_lot_count_splits(l))
     {
@@ -182,8 +182,8 @@ query_match_all_lot_filter_func(gpointer key, gpointer value, gpointer user_data
 static void
 query_match_any_lot_filter_func(gpointer key, gpointer value, gpointer user_data)
 {
-    GNCLot *	t = key;
-    GList **	matches = user_data;
+    GNCLot *	t = static_cast <GNCLot *> (key);
+    GList **	matches = static_cast <GList **> (user_data);
     *matches = g_list_prepend(*matches, t);
 }
 
@@ -244,7 +244,7 @@ xaccQueryAddAccountMatch(QofQuery *q, AccountList *acct_list,
     if (!q) return;
     for (; acct_list; acct_list = acct_list->next)
     {
-        Account *acc = acct_list->data;
+        Account *acc = static_cast <Account *> (acct_list->data);
         const GncGUID *guid;
 
         if (!acc)
@@ -442,7 +442,7 @@ xaccQueryGetDateMatchTS (QofQuery * q,
 
     for (tmp = terms; tmp; tmp = g_slist_next(tmp))
     {
-        term_data = tmp->data;
+        term_data = static_cast <QofQueryPredData *> (tmp->data);
         if (term_data->how == QOF_COMPARE_GTE)
             qof_query_date_predicate_get_date(term_data, sts);
         if (term_data->how == QOF_COMPARE_LTE)
@@ -596,11 +596,11 @@ xaccQueryGetEarliestDateFound(QofQuery * q)
     if (!spl) return 0;
 
     /* Safe until 2038 on archs where time64 is 32bit */
-    sp = spl->data;
+    sp = static_cast <Split *> (spl->data);
     earliest = sp->parent->date_posted.tv_sec;
     for (; spl; spl = spl->next)
     {
-        sp = spl->data;
+        sp = static_cast <Split *> (spl->data);
         if (sp->parent->date_posted.tv_sec < earliest)
         {
             earliest = sp->parent->date_posted.tv_sec;
@@ -626,7 +626,7 @@ xaccQueryGetLatestDateFound(QofQuery * q)
 
     for (; spl; spl = spl->next)
     {
-        sp = spl->data;
+        sp = static_cast <Split *> (spl->data);
         if (sp->parent->date_posted.tv_sec > latest)
         {
             latest = sp->parent->date_posted.tv_sec;
