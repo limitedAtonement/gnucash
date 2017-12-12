@@ -1282,18 +1282,12 @@ test_get_corr_account_split (Fixture *fixture, gconstpointer pData)
     Account *acc3 = xaccMallocAccount (book);
     Account *acc4 = xaccMallocAccount (book);
     Account *acc5 = xaccMallocAccount (book);
-#ifdef USE_CLANG_FUNC_SIG
-#define _func "gboolean get_corr_account_split(const Split *, const Split **)"
-#else
-#define _func "get_corr_account_split"
-#endif
-    gchar *msg = _func ": assertion 'sa' failed";
-#undef _func
+    auto msg = ": assertion 'sa' failed";
     GLogLevelFlags loglevel = static_cast<GLogLevelFlags>(G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL);
     TestErrorStruct *check = test_error_struct_new ("gnc.engine",
                              loglevel, msg);
     fixture->hdlrs = test_log_set_fatal_handler (fixture->hdlrs, check,
-                     (GLogFunc)test_checked_handler);
+                     (GLogFunc)test_checked_substring_handler);
 
     xaccAccountSetCommodity (acc1, fixture->curr);
     xaccAccountSetCommodity (acc2, fixture->curr);

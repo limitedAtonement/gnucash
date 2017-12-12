@@ -51,6 +51,9 @@
 #include "gnc-engine.h"   /* for typedefs */
 #include "qof.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** STRUCTS *********************************************************/
 /* A "split" is more commonly referred to as an "entry" in a "transaction".
@@ -251,8 +254,10 @@ typedef struct
 
 SplitTestFunctions* _utest_split_fill_functions (void);
 
-
 /*@}*/
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* XACC_SPLIT_P_H */
