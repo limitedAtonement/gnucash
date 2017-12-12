@@ -52,6 +52,9 @@
 #include "SplitP.h"
 #include "qof.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** STRUCTS *********************************************************/
 /*
@@ -187,5 +190,8 @@ TransTestFunctions* _utest_trans_fill_functions (void);
 
 /*@}*/
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* XACC_TRANSACTION_P_H */

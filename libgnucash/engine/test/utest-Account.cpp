@@ -852,13 +852,7 @@ test_xaccFreeAccount (Fixture *fixture, gconstpointer pData)
 {
     auto msg1 = "[xaccFreeAccount()]  instead of calling xaccFreeAccount(), please call \n"
                   " xaccAccountBeginEdit(); xaccAccountDestroy(); \n";
-#ifdef USE_CLANG_FUNC_SIG
-#define _func "int xaccTransGetSplitIndex(const Transaction *, const Split *)"
-#else
-#define _func "xaccTransGetSplitIndex"
-#endif
-    auto msg2 = _func ": assertion 'trans && split' failed";
-#undef _func
+    auto msg2 = ": assertion 'trans && split' failed";
     auto loglevel = static_cast<GLogLevelFlags>(G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL);
     auto check1 = test_error_struct_new("gnc.account", loglevel, msg1);
     auto check2 = test_error_struct_new("gnc.engine", loglevel, msg2);
@@ -874,7 +868,7 @@ test_xaccFreeAccount (Fixture *fixture, gconstpointer pData)
     hdlr1 = g_log_set_handler ("gnc.account", loglevel,
                                (GLogFunc)test_checked_handler, check1);
     hdlr2 = g_log_set_handler ("gnc.engine", loglevel,
-                               (GLogFunc)test_checked_handler, check2);
+                               (GLogFunc)test_checked_substring_handler, check2);
     g_test_log_set_fatal_handler ((GTestLogFatalFunc)test_list_handler, NULL);
     for (i = 0; i < numItems; i++)
     {

@@ -148,7 +148,7 @@ SET (engine_SOURCES
   ScrubBusiness.cpp
   Split.cpp
   TransLog.cpp
-  Transaction.c
+  Transaction.cpp
   cap-gains.c
   cashobjects.c
   gnc-aqbanking-templates.cpp
