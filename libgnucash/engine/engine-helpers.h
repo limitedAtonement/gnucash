@@ -32,6 +32,10 @@
 #include "Query.h"
 #include "Transaction.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*GncBOCb)    (gpointer new_val, gpointer user_data);
 
 Timespec gnc_transaction_get_date_posted(const Transaction *t);
@@ -90,5 +94,9 @@ gnc_book_option_register_cb (gchar *key, GncBOCb func, gpointer user_data);
 /** Removes previously registered callbacks for the specified book option key */
 void
 gnc_book_option_remove_cb (gchar *key, GncBOCb func, gpointer user_data);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif

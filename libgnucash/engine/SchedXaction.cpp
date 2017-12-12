@@ -206,25 +206,25 @@ gnc_schedxaction_set_property (GObject         *object,
         /* Note: when passed through a boxed gvalue, the julian value of the date is copied.
            The date may appear invalid until a function requiring for dmy calculation is
            called. */
-        xaccSchedXactionSetStartDate(sx, g_value_get_boxed(value));
+        xaccSchedXactionSetStartDate(sx, static_cast <GDate *> (g_value_get_boxed(value)));
         break;
     case PROP_END_DATE:
         /* Note: when passed through a boxed gvalue, the julian value of the date is copied.
            The date may appear invalid until a function requiring for dmy calculation is
            called. */
-        xaccSchedXactionSetEndDate(sx, g_value_get_boxed(value));
+        xaccSchedXactionSetEndDate(sx, static_cast <GDate *> (g_value_get_boxed(value)));
         break;
     case PROP_LAST_OCCURANCE_DATE:
         /* Note: when passed through a boxed gvalue, the julian value of the date is copied.
            The date may appear invalid until a function requiring for dmy calculation is
            called. */
-        xaccSchedXactionSetLastOccurDate(sx, g_value_get_boxed(value));
+        xaccSchedXactionSetLastOccurDate(sx, static_cast <GDate *> (g_value_get_boxed(value)));
         break;
     case PROP_INSTANCE_COUNT:
         gnc_sx_set_instance_count(sx, g_value_get_int(value));
         break;
     case PROP_TEMPLATE_ACCOUNT:
-        sx_set_template_account(sx, g_value_get_object(value));
+        sx_set_template_account(sx, static_cast <Account *> (g_value_get_object(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -407,7 +407,7 @@ xaccSchedXactionMalloc(QofBook *book)
 
     g_return_val_if_fail (book, NULL);
 
-    sx = g_object_new(GNC_TYPE_SCHEDXACTION, NULL);
+    sx = static_cast <SchedXaction *> (g_object_new(GNC_TYPE_SCHEDXACTION, NULL));
     xaccSchedXactionInit( sx, book );
     qof_event_gen( &sx->inst, QOF_EVENT_CREATE , NULL);
 
@@ -509,7 +509,7 @@ xaccSchedXactionFree( SchedXaction *sx )
 
     for ( l = sx->deferredList; l; l = l->next )
     {
-        gnc_sx_destroy_temporal_state( l->data );
+        gnc_sx_destroy_temporal_state( static_cast< SXTmpStateData *>( l->data ));
         l->data = NULL;
     }
     if ( sx->deferredList )
@@ -1003,7 +1003,7 @@ xaccSchedXactionSetTemplateTrans(SchedXaction *sx, GList *t_t_list,
 
     for (; t_t_list != NULL; t_t_list = t_t_list->next)
     {
-        tti = t_t_list->data;
+        tti = static_cast <TTInfo *> (t_t_list->data);
 
         new_trans = xaccMallocTransaction(book);
 
@@ -1026,7 +1026,7 @@ xaccSchedXactionSetTemplateTrans(SchedXaction *sx, GList *t_t_list,
                 split_list;
                 split_list = split_list->next)
         {
-            s_info = split_list->data;
+            s_info = static_cast <TTSplitInfo *> (split_list->data);
             new_split = pack_split_info(s_info, sx->template_acct,
                                         new_trans, book);
             xaccTransAppendSplit(new_trans, new_split);
@@ -1043,7 +1043,7 @@ gnc_sx_create_temporal_state(const SchedXaction *sx )
     if (g_date_valid (&(sx->last_date)))
 	 toRet->last_date       = sx->last_date;
     else
-	g_date_set_dmy (&(toRet->last_date), 1, 1, 1970);
+	g_date_set_dmy (&(toRet->last_date), 1, G_DATE_JANUARY, 1970);
     toRet->num_occur_rem   = sx->num_occurances_remain;
     toRet->num_inst   = sx->instance_num;
     return toRet;
@@ -1071,7 +1071,7 @@ SXTmpStateData*
 gnc_sx_clone_temporal_state (SXTmpStateData *tsd)
 {
     SXTmpStateData *toRet;
-    toRet = g_memdup (tsd, sizeof (SXTmpStateData));
+    toRet = static_cast <SXTmpStateData *> (g_memdup (tsd, sizeof (SXTmpStateData)));
     return toRet;
 }
 
@@ -1122,7 +1122,7 @@ gnc_sx_remove_defer_instance( SchedXaction *sx, void *deferStateData )
         return;
     }
 
-    gnc_sx_destroy_temporal_state(found_by_value->data);
+    gnc_sx_destroy_temporal_state(static_cast <SXTmpStateData *> (found_by_value->data));
     sx->deferredList = g_list_delete_link(sx->deferredList, found_by_value);
 }
 
@@ -1176,7 +1176,7 @@ static QofObject SXDesc =
     DI(.interface_version = ) QOF_OBJECT_VERSION,
     DI(.e_type            = ) GNC_SX_ID,
     DI(.type_label        = ) "Scheduled Transaction",
-    DI(.create            = ) (gpointer)xaccSchedXactionMalloc,
+    DI(.create            = ) reinterpret_cast <gpointer (*) (QofBook *)> (xaccSchedXactionMalloc),
     DI(.book_begin        = ) NULL,
     DI(.book_end          = ) gnc_sx_book_end,
     DI(.is_dirty          = ) qof_collection_is_dirty,
