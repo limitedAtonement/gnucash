@@ -141,8 +141,8 @@ SET (engine_SOURCES
   Query.cpp
   SchedXaction.cpp
   SX-book.cpp
-  SX-ttinfo.c
-  Scrub.c
+  SX-ttinfo.cpp
+  Scrub.cpp
   Scrub2.c
   Scrub3.c
   ScrubBusiness.c

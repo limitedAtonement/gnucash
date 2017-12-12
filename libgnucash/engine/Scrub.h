@@ -52,6 +52,10 @@
 
 #include "gnc-engine.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @name Double-Entry Scrubbing
     Convert single-entry accounts to clean double-entry
 
@@ -153,6 +157,10 @@ void xaccAccountScrubKvp (Account *account);
  * change was made for v2.6.14 to partially resolve bug 137017.
  */
 void xaccTransScrubPostedDate (Transaction *trans);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* XACC_SCRUB_H */
 /** @} */

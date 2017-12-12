@@ -32,10 +32,17 @@
 #include "gnc-commodity.h"
 #include "gnc-engine.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Utility to make account by name.  Not for public use. */
 Account * xaccScrubUtilityGetOrMakeAccount (Account *root,
         gnc_commodity * currency, const char *accname,
         GNCAccountType acctype, gboolean placeholder);
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* XACC_SCRUB_P_H */

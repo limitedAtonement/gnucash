@@ -55,7 +55,7 @@ gnc_ttinfo_malloc(void)
 static void
 delete_splitinfo(gpointer data, gpointer user_data)
 {
-    gnc_ttsplitinfo_free( (TTSplitInfo *) data);
+    gnc_ttsplitinfo_free( static_cast <TTSplitInfo *> (data));
     return;
 }
 

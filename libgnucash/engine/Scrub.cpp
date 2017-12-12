@@ -66,7 +66,8 @@ xaccAccountTreeScrubOrphans (Account *acc, QofPercentageFunc percentagefunc)
 
     xaccAccountScrubOrphans (acc, percentagefunc);
     gnc_account_foreach_descendant(acc,
-                                   (AccountCb)xaccAccountScrubOrphans, percentagefunc);
+                                   (AccountCb)xaccAccountScrubOrphans,
+                                   reinterpret_cast <gpointer> (percentagefunc));
 }
 
 static void
@@ -80,7 +81,7 @@ TransScrubOrphansFast (Transaction *trans, Account *root)
 
     for (node = trans->splits; node; node = node->next)
     {
-        Split *split = node->data;
+        Split *split = static_cast <Split *> (node->data);
         Account *orph;
 
         if (split->acc) continue;
@@ -118,7 +119,7 @@ xaccAccountScrubOrphans (Account *acc, QofPercentageFunc percentagefunc)
 
     for (node = splits; node; node = node->next)
     {
-        Split *split = node->data;
+        Split *split = static_cast <Split *> (node->data);
 
         if (current_split % 100 == 0)
         {
@@ -146,7 +147,7 @@ xaccTransScrubOrphans (Transaction *trans)
 
     for (node = trans->splits; node; node = node->next)
     {
-        Split *split = node->data;
+        Split *split = static_cast <Split *> (node->data);
 
         if (split->acc)
         {
@@ -184,7 +185,7 @@ xaccAccountScrubSplits (Account *account)
     GList *node;
 
     for (node = xaccAccountGetSplitList (account); node; node = node->next)
-        xaccSplitScrub (node->data);
+        xaccSplitScrub (static_cast <Split *> (node->data));
 }
 
 void
@@ -292,7 +293,8 @@ xaccAccountTreeScrubImbalance (Account *acc, QofPercentageFunc percentagefunc)
 {
     xaccAccountScrubImbalance (acc, percentagefunc);
     gnc_account_foreach_descendant(acc,
-                                   (AccountCb)xaccAccountScrubImbalance, percentagefunc);
+                                   (AccountCb)xaccAccountScrubImbalance,
+                                   reinterpret_cast <gpointer> (percentagefunc));
 }
 
 void
@@ -313,7 +315,7 @@ xaccAccountScrubImbalance (Account *acc, QofPercentageFunc percentagefunc)
     split_count = g_list_length (splits);
     for (node = splits; node; node = node->next)
     {
-        Split *split = node->data;
+        Split *split = static_cast <Split *> (node->data);
         Transaction *trans = xaccSplitGetParent(split);
 
         PINFO("Start processing split %d of %d",
@@ -588,7 +590,7 @@ gnc_transaction_adjust_trading_splits (Transaction* trans, Account *root)
     gnc_numeric imbalance = gnc_numeric_zero();
     for (splits = trans->splits; splits; splits = splits->next)
     {
-        Split *split = splits->data;
+        Split *split = static_cast <Split *> (splits->data);
         Split *balance_split = NULL;
         gnc_numeric value, amount;
         gnc_commodity *commodity, *txn_curr = xaccTransGetCurrency (trans);
@@ -646,7 +648,7 @@ gnc_transaction_get_commodity_imbalance (Transaction *trans,
     GList *splits = NULL;
     for (splits = trans->splits; splits; splits = splits->next)
     {
-        Split *split = splits->data;
+        Split *split = static_cast <Split *> (splits->data);
         gnc_commodity *split_commodity =
             xaccAccountGetCommodity(xaccSplitGetAccount(split));
         if (xaccTransStillHasSplit (trans, split) &&
@@ -679,7 +681,7 @@ gnc_transaction_balance_trading (Transaction *trans, Account *root)
     for (imbalance_commod = imbal_list; imbalance_commod;
          imbalance_commod = imbalance_commod->next)
     {
-        gnc_monetary *imbal_mon = imbalance_commod->data;
+        gnc_monetary *imbal_mon = static_cast <gnc_monetary *> (imbalance_commod->data);
         gnc_commodity *commodity;
         gnc_numeric old_amount, new_amount;
         gnc_numeric old_value, new_value, val_imbalance;
@@ -746,7 +748,7 @@ gnc_transaction_balance_trading_more_splits (Transaction *trans, Account *root)
     const gnc_commodity  *txn_curr = xaccTransGetCurrency (trans);
     for (splits = splits_dup; splits; splits = splits->next)
     {
-        Split *split = splits->data;
+        Split *split = static_cast <Split *> (splits->data);
         if (! xaccTransStillHasSplit(trans, split)) continue;
         if (!gnc_numeric_zero_p(xaccSplitGetValue(split)) &&
             gnc_numeric_zero_p(xaccSplitGetAmount(split)))
@@ -865,7 +867,7 @@ FindCommonExclSCurrency (SplitList *splits,
 
     for (node = splits; node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = static_cast <Split *> (node->data);
         gnc_commodity * sa, * sb;
 
         if (s == excl_split) continue;
@@ -939,7 +941,7 @@ xaccTransFindOldCommonCurrency (Transaction *trans, QofBook *book)
 
     g_return_val_if_fail (book, NULL);
 
-    split = trans->splits->data;
+    split = static_cast <Split *> (trans->splits->data);
 
     if (!split || NULL == split->acc) return NULL;
 
@@ -1024,7 +1026,7 @@ xaccTransFindCommonCurrency (Transaction *trans, QofBook *book)
        account splits in this whole process, they don't add any value to this algorithm. */
     for (node = trans->splits; node; node = node->next)
     {
-        Split *s = node->data;
+        Split *s = static_cast <Split *> (node->data);
         unsigned int curr_weight;
 
         if (s == NULL || s->acc == NULL) continue;
@@ -1110,22 +1112,22 @@ xaccTransScrubCurrency (Transaction *trans)
 
             for (node = trans->splits; node; node = node->next)
             {
-                Split *split = node->data;
+                Split *split = static_cast <Split *> (node->data);
                 if (NULL == split->acc)
                 {
                     PWARN (" split=\"%s\" is not in any account!", split->memo);
                 }
                 else
                 {
-		    gnc_commodity *currency = xaccAccountGetCommodity(split->acc);
+                    gnc_commodity *currency = xaccAccountGetCommodity(split->acc);
                     PWARN ("setting to split=\"%s\" account=\"%s\" commodity=\"%s\"",
                            split->memo, xaccAccountGetName(split->acc),
                            gnc_commodity_get_mnemonic(currency));
 
-		    xaccTransBeginEdit (trans);
-		    xaccTransSetCurrency (trans, currency);
-		    xaccTransCommitEdit (trans);
-		    return;
+                    xaccTransBeginEdit (trans);
+                    xaccTransSetCurrency (trans, currency);
+                    xaccTransCommitEdit (trans);
+                    return;
                 }
             }
         }
@@ -1134,7 +1136,7 @@ xaccTransScrubCurrency (Transaction *trans)
 
     for (node = trans->splits; node; node = node->next)
     {
-        Split *sp = node->data;
+        Split *sp = static_cast <Split *> (node->data);
 
         if (!gnc_numeric_equal(xaccSplitGetAmount (sp),
                                xaccSplitGetValue (sp)))
