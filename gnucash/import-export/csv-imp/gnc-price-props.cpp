@@ -311,7 +311,7 @@ Result GncImportPrice::create_price (QofBook* book, GNCPriceDB *pdb, bool over)
         auto amount_conv = amount.convert<RoundType::half_up>(CURRENCY_DENOM);
         gnc_price_set_value (price, static_cast<gnc_numeric>(amount_conv));
 
-        gnc_price_set_time (price, date);
+        gnc_price_set_time (price, date.tv_sec);
         gnc_price_set_source (price, PRICE_SOURCE_USER_PRICE);
 //FIXME Not sure which one        gnc_price_set_source (price, PRICE_SOURCE_FQ);
         gnc_price_set_typestr (price, PRICE_TYPE_LAST);

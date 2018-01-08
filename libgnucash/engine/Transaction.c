@@ -1882,7 +1882,7 @@ xaccTransOrder_num_action (const Transaction *ta, const char *actna,
     if ( !ta && !tb ) return 0;
 
     if (ta->date_posted != tb->date_posted)
-        return (ta->date_posted > tb->date_posted) - (ta->date_posted < tb->date_posted);
+        return time64_cmp (ta->date_posted, tb->date_posted);
 
     /* otherwise, sort on number string */
     if (actna && actnb) /* split action string, if not NULL */
@@ -1899,7 +1899,7 @@ xaccTransOrder_num_action (const Transaction *ta, const char *actna,
     if (na > nb) return +1;
 
     if (ta->date_entered != tb->date_entered)
-        return (ta->date_entered > tb->date_entered) - (ta->date_entered < tb->date_entered);
+        return time64_cmp (ta->date_entered, tb->date_entered);
 
     /* otherwise, sort on description string */
     da = ta->description ? ta->description : "";

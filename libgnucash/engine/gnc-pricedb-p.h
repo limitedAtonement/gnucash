@@ -38,7 +38,7 @@ struct gnc_price_s
     GNCPriceDB *db;
     gnc_commodity *commodity;
     gnc_commodity *currency;
-    Timespec tmspec;
+    time64 time;
     PriceSource source;
     char *type;
     gnc_numeric value;

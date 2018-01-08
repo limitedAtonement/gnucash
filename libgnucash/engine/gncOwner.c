@@ -719,7 +719,7 @@ gncOwnerLotsSortFunc (GNCLot *lotA, GNCLot *lotB)
     else
         db = xaccTransRetDatePosted (xaccSplitGetParent (gnc_lot_get_earliest_split (lotB)));
 
-    return (da > db) - (da < db);
+    return time64_cmp (da, db);
 }
 
 GNCLot *

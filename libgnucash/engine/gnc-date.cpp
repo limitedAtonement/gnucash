@@ -425,6 +425,12 @@ timespec_equal (const Timespec *ta, const Timespec *tb)
 }
 
 gint
+time64_cmp (time64 lhs, time64 rhs)
+{
+    return (lhs > rhs) - (lhs < rhs);
+}
+
+gint
 timespec_cmp(const Timespec *ta, const Timespec *tb)
 {
     Timespec pta, ptb;
@@ -695,6 +701,13 @@ qof_print_date (time64 t)
     memset (buff, 0, sizeof (buff));
     qof_print_date_buff (buff, MAX_DATE_LENGTH, t);
     return g_strdup (buff);
+}
+
+const char *
+gnc_print_date64 (time64 time)
+{
+    Timespec ts {time,0};
+    return gnc_print_date (ts);
 }
 
 const char *

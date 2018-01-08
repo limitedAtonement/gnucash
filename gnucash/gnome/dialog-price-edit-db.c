@@ -256,9 +256,10 @@ gnc_prices_dialog_load_view (GtkTreeView *view, GNCPriceDB *pdb)
                 PriceList *list = gnc_pricedb_get_prices (pdb, tmp_commodity, NULL);
                 GList *node = g_list_last (list);
                 GNCPrice *price = (GNCPrice*)node->data;
-                Timespec price_ts = gnc_price_get_time (price);
+                Timespec price_ts = {0,0};
                 const gchar *name_str = gnc_commodity_get_printname (tmp_commodity);
                 gchar *date_str, *num_str;
+                price_ts.tv_sec = gnc_price_get_time (price);
 
                 if (timespec_cmp(&oldest_ts, &price_ts) >= 0)
                     oldest_ts.tv_sec = price_ts.tv_sec;
@@ -454,14 +455,13 @@ gnc_prices_dialog_remove_old_clicked (GtkWidget *widget, gpointer data)
         // Are you sure you want to delete the entries and we have commodities
         if ((g_list_length (comm_list) != 0) && (gnc_verify_dialog (GTK_WINDOW (pdb_dialog->remove_dialog), FALSE, fmt, NULL)))
         {
-            Timespec last_ts;
+            time64 last_time;
             GDate fiscal_end_date = get_fiscal_end_date ();
             PriceRemoveSourceFlags source = PRICE_REMOVE_SOURCE_FQ;
             PriceRemoveKeepOptions keep = PRICE_REMOVE_KEEP_NONE;
 
             DEBUG("deleting prices");
-            last_ts.tv_sec = gnc_date_edit_get_date (GNC_DATE_EDIT (date));
-            last_ts.tv_nsec = 0;
+            last_time = gnc_date_edit_get_date (GNC_DATE_EDIT (date));
 
             button = GTK_WIDGET(gtk_builder_get_object (builder, "radiobutton_last_week"));
             if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
@@ -481,21 +481,21 @@ gnc_prices_dialog_remove_old_clicked (GtkWidget *widget, gpointer data)
 
             if (keep != PRICE_REMOVE_KEEP_SCALED)
                 gnc_pricedb_remove_old_prices (pdb_dialog->price_db, comm_list, &fiscal_end_date,
-                                               last_ts, pdb_dialog->remove_source, keep);
+                                               last_time, pdb_dialog->remove_source, keep);
             else
             {
-                Timespec tmp_ts;
-                GDate tmp_date = timespec_to_gdate (last_ts);
+                time64 tmp_time;
+                GDate tmp_date = time64_to_gdate (last_time);
                 g_date_subtract_months (&tmp_date, 6);
-                tmp_ts = gdate_to_timespec (tmp_date);
+                tmp_time = gdate_to_time64 (tmp_date);
 
-                gnc_pricedb_remove_old_prices (pdb_dialog->price_db, comm_list, &fiscal_end_date, tmp_ts,
+                gnc_pricedb_remove_old_prices (pdb_dialog->price_db, comm_list, &fiscal_end_date, tmp_time,
                                                pdb_dialog->remove_source, PRICE_REMOVE_KEEP_LAST_WEEKLY);
 
                 g_date_subtract_months (&tmp_date, 6);
-                tmp_ts = gdate_to_timespec (tmp_date);
+                tmp_time = gdate_to_time64 (tmp_date);
 
-                gnc_pricedb_remove_old_prices (pdb_dialog->price_db, comm_list, &fiscal_end_date, tmp_ts,
+                gnc_pricedb_remove_old_prices (pdb_dialog->price_db, comm_list, &fiscal_end_date, tmp_time,
                                                pdb_dialog->remove_source, PRICE_REMOVE_KEEP_LAST_MONTHLY);
             }
         }

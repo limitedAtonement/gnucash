@@ -430,7 +430,7 @@
                   (if (>= (gnc-price-get-source saved-price) PRICE-SOURCE-FQ)
                       (begin
                         (gnc-price-begin-edit saved-price)
-                        (gnc-price-set-time64 saved-price gnc-time)
+                        (gnc-price-set-time saved-price gnc-time)
                         (gnc-price-set-source saved-price PRICE-SOURCE-FQ)
                         (gnc-price-set-typestr saved-price price-type)
                         (gnc-price-set-value saved-price price)
@@ -445,7 +445,7 @@
                         (gnc-price-begin-edit gnc-price)
                         (gnc-price-set-commodity gnc-price commodity)
                         (gnc-price-set-currency gnc-price currency)
-                        (gnc-price-set-time64 gnc-price gnc-time)
+                        (gnc-price-set-time gnc-price gnc-time)
                         (gnc-price-set-source gnc-price PRICE-SOURCE-FQ)
                         (gnc-price-set-typestr gnc-price price-type)
                         (gnc-price-set-value gnc-price price)

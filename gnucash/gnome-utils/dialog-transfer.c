@@ -266,7 +266,7 @@ lookup_price(PriceReq *pr, PriceDate pd)
             break;
         case NEAREST:
             prc = gnc_pricedb_lookup_nearest_in_time (pr->pricedb, pr->from,
-                                                      pr->to, pr->ts);
+                                                      pr->to, pr->ts.tv_sec);
             break;
         case LATEST:
             prc = gnc_pricedb_lookup_latest (pr->pricedb, pr->from, pr->to);
@@ -1592,7 +1592,7 @@ update_price(XferDialog *xferData, PriceReq *pr)
         return;
     }
     gnc_price_begin_edit (pr->price);
-    gnc_price_set_time (pr->price, pr->ts);
+    gnc_price_set_time (pr->price, pr->ts.tv_sec);
     gnc_price_set_typestr(pr->price, xferData->price_type);
     gnc_price_set_value (pr->price, value);
     gnc_price_commit_edit (pr->price);
@@ -1628,7 +1628,7 @@ new_price(XferDialog *xferData, Timespec ts)
     gnc_price_begin_edit (price);
     gnc_price_set_commodity (price, from);
     gnc_price_set_currency (price, to);
-    gnc_price_set_time (price, ts);
+    gnc_price_set_time (price, ts.tv_sec);
     gnc_price_set_source (price, xferData->price_source);
     gnc_price_set_typestr (price, xferData->price_type);
     gnc_price_set_value (price, value);

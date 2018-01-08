@@ -249,7 +249,7 @@
                 price-commodity report-currency))
               ((pricedb)
                (map (lambda (p)
-                      (list (gnc-price-get-time64 p)
+                      (list (gnc-price-get-time p)
                             (gnc-price-get-value p)))
                     (gnc-pricedb-get-prices
                      (gnc-pricedb-get-db (gnc-get-current-book))

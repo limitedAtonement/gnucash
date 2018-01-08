@@ -1540,7 +1540,7 @@ xaccSplitOrderDateOnly (const Split *sa, const Split *sb)
 
     if (ta->date_posted == tb->date_posted)
         return -1; // Keep the same order
-    return (ta->date_posted > tb->date_posted) - (ta->date_posted < tb->date_posted);
+    return time64_cmp (ta->date_posted, tb->date_posted);
 }
 
 static gboolean

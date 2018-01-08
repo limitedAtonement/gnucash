@@ -320,6 +320,7 @@ gboolean timespec_equal(const Timespec *ta, const Timespec *tb);
 
 /** comparison:  if (ta < tb) -1; else if (ta > tb) 1; else 0; */
 gint      timespec_cmp(const Timespec *ta, const Timespec *tb);
+gint      time64_cmp (time64, time64);
 
 /** difference between ta and tb, results are normalized
  * ie tv_sec and tv_nsec of the result have the same size
@@ -563,6 +564,7 @@ char * qof_print_date (time64 secs);
  *      or qof_print_date() instead.
  * **/
 const char * gnc_print_date(Timespec ts);
+const char * gnc_print_date64(time64);
 
 /* ------------------------------------------------------------------ */
 /* time printing utilities */
